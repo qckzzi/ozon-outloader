@@ -11,9 +11,4 @@ class Fetcher:
     def get_products() -> list[MBProduct]:
         products = requests.get(config.mb_products_url).json()
 
-        result = []
-
-        for product in products:
-            result.append(MBProduct(**product))
-
-        return result
+        return products

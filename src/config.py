@@ -27,7 +27,7 @@ ozon_domain = os.getenv('OZON_DOMAIN')
 if not ozon_domain:
     raise ValueError('Не задан домен OZON API.')
 
-ozon_product_import_url = ozon_domain + '/v2/product/import'
+ozon_product_import_url = ozon_domain + 'v2/product/import'
 
 ozon_client_id = os.getenv('OZON_CLIENT_ID')
 ozon_api_key = os.getenv('OZON_API_KEY')
