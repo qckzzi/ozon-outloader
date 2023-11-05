@@ -1,0 +1,11 @@
+secret_config.ini
+venv/
+.env
+.idea
+*.log
+*.cache
+*.pyc
+*.pyo
+*~
+.vscode
+.python-version
