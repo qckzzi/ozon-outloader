@@ -15,10 +15,6 @@ if not mb_domain:
     raise ValueError('Не задан домен Markets-Bridge.')
 
 mb_products_url = mb_domain + 'api/v1/provider/products/for_ozon/'
-marketplace_id = int(os.getenv('OZON_ID', default=0))
-
-if not marketplace_id:
-    raise ValueError('Не задан ID записи маркетплейса "Озон", находящейся в БД Markets-Bridge.')
 
 
 # OZON
