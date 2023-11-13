@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-"""Основной модуль запуска загрузчика."""
 import json
 import logging
 
