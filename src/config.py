@@ -8,22 +8,11 @@ from dotenv import (
 load_dotenv()
 
 
-# Markets-Bridge
-mb_domain = os.getenv('MB_DOMAIN')
-
-if not mb_domain:
-    raise ValueError('Не задан домен Markets-Bridge.')
-
-mb_products_url = mb_domain + 'api/v1/provider/products/for_ozon/'
-
-
 # OZON
-ozon_domain = os.getenv('OZON_DOMAIN')
-
-if not ozon_domain:
-    raise ValueError('Не задан домен OZON API.')
-
+ozon_domain = 'https://api-seller.ozon.ru/'
 ozon_product_import_url = ozon_domain + 'v2/product/import'
+ozon_update_product_prices_url = ozon_domain + 'v1/product/import/prices'
+ozon_update_product_stocks_url = ozon_domain + 'v1/product/import/stocks'
 
 ozon_client_id = os.getenv('OZON_CLIENT_ID')
 ozon_api_key = os.getenv('OZON_API_KEY')
