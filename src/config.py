@@ -7,6 +7,20 @@ from dotenv import (
 
 load_dotenv()
 
+# Markets-Bridge
+mb_domain = os.getenv('MB_DOMAIN')
+
+if not mb_domain:
+    raise ValueError('Не ')
+
+mb_login = os.getenv('MB_LOGIN')
+mb_password = os.getenv('MB_PASSWORD')
+
+if not (mb_login and mb_password):
+    raise ValueError('MB_LOGIN and MB_PASSWORD not set for Markets-Bridge authentication')
+
+mb_token_url = mb_domain + 'api/token/'
+mb_token_refresh_url = mb_token_url + 'refresh/'
 
 # OZON
 ozon_domain = 'https://api-seller.ozon.ru/'
