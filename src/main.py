@@ -3,68 +3,45 @@ import json
 import logging
 
 import pika
-import requests
 
-import config
-
-
-_headers = {'Client-Id': config.ozon_client_id, 'Api-Key': config.ozon_api_key}
+from markets_bridge.utils import (
+    write_log_entry,
+)
+from ozon.utils import (
+    OzonSender,
+)
 
 
 def callback(ch, method, properties, body):
     try:
         message = json.loads(body)
+        operation_type = message['method']
 
-        processing_map = {
-            'LOAD_PRODUCTS': load_products,
-            'UPDATE_PRODUCT_PRICES' : update_product_prices,
-            'UPDATE_PRODUCT_STOCKS' : update_product_stocks,
-        }
+        logging.info(f'Products was received for "{operation_type.lower()}" action.')
 
-        processing_function = processing_map[message['method']]
-
-        logging.info(f'Products was received for "{message["method"].lower()}" action.')
+        sending_function = OzonSender.get_sending_method_by_operation_type(operation_type)
 
         products = message['products']
-        processing_function(products)
+        sending_function(products)
 
     except KeyError as e:
-        logging.exception(f'Body validation error: {e}')
+        error = f'Body validation error: {e}'
+        write_log_entry(error)
+        logging.error(error)
         return
     except Exception as e:
-        logging.exception(f'There was a problem: {e}')
+        error = f'There was a problem: {e}'
+        write_log_entry(error)
+        logging.exception(error)
         return
-
-
-def load_products(products: dict):
-    response = requests.post(config.ozon_product_import_url, headers=_headers, json=products)
-    response.raise_for_status()
-    logging.info(f'Import result: {response.json()['result']}')
-
-
-def update_product_prices(products: dict):
-    response = requests.post(config.ozon_update_product_prices_url, headers=_headers, json=products)
-    response.raise_for_status()
-    logging.info(f'Prices update result: {response.json()['result']}')
-
-
-def update_product_stocks(products: dict):
-    response = requests.post(config.ozon_update_product_stocks_url, headers=_headers, json=products)
-    response.raise_for_status()
-    logging.info(f'Stocks update result: {response.json()['result']}')
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
     connection_parameters = pika.ConnectionParameters(host='localhost', heartbeat=300, blocked_connection_timeout=300)
-    connection = pika.BlockingConnection(connection_parameters)
-    channel = connection.channel()
-    channel.queue_declare('outloading')
-    channel.basic_consume('outloading', callback, auto_ack=True)
-
-    try:
+    with pika.BlockingConnection(connection_parameters) as connection:
+        channel = connection.channel()
+        channel.queue_declare('outloading')
+        channel.basic_consume('outloading', callback, auto_ack=True)
         channel.start_consuming()
-    except KeyboardInterrupt:
-        channel.close()
-        connection.close()
