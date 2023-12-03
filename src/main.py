@@ -22,7 +22,8 @@ def callback(ch, method, properties, body):
         sending_function = OzonSender.get_sending_method_by_operation_type(operation_type)
 
         products = message['products']
-        sending_function(products)
+        headers = _get_headers(products.pop('personal_area'))
+        sending_function(products, headers)
 
     except KeyError as e:
         error = f'Body validation error: {e}'
@@ -34,6 +35,15 @@ def callback(ch, method, properties, body):
         write_log_entry(error)
         logging.exception(error)
         return
+
+
+def _get_headers(personal_area_variables: list[dict]):
+    headers = {}
+
+    for variable in personal_area_variables:
+        headers.update({variable['key']: variable['value']})
+
+    return {variable['key']: variable['value'] for variable in personal_area_variables}
 
 
 if __name__ == '__main__':
