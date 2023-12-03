@@ -7,6 +7,9 @@ import pika
 from markets_bridge.utils import (
     write_log_entry,
 )
+from ozon.enums import (
+    OperationType,
+)
 from ozon.utils import (
     OzonSender,
 )
@@ -23,7 +26,10 @@ def callback(ch, method, properties, body):
 
         products = message['products']
         headers = _get_headers(products.pop('personal_area'))
-        sending_function(products, headers)
+
+        if operation_type == OperationType.UPDATE_PRODUCT_STOCKS:
+            for i in range(0, len(products), 100):
+                sending_function(products[i:i+100], headers)
 
     except KeyError as e:
         error = f'Body validation error: {e}'
