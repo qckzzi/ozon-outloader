@@ -54,4 +54,8 @@ if __name__ == '__main__':
         channel = connection.channel()
         channel.queue_declare('outloading')
         channel.basic_consume('outloading', callback, auto_ack=True)
-        channel.start_consuming()
+
+        try:
+            channel.start_consuming()
+        except KeyboardInterrupt:
+            pass

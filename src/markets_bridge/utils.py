@@ -77,19 +77,11 @@ def write_log_entry(message: str):
     response.raise_for_status()
 
 
-def get_ozon_client_id() -> str:
-    return get_system_environment('OZON_CLIENT_ID')
-
-
-def get_ozon_api_key() -> str:
-    return get_system_environment('OZON_API_KEY')
-
-
 def get_system_environment(environment_key: str) -> str:
     """Возвращает системную переменную из сервиса Markets-Bridge по ключу."""
 
     headers = get_authorization_headers()
-    response = requests.get(f'{config.mb_system_environments_url}{environment_key}/', headers=headers)
+    response = requests.get(f'{config.mb_system_variables_url}{environment_key}/', headers=headers)
 
     if response.status_code == 401:
         accesser = Accesser()
