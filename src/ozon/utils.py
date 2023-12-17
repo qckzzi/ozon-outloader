@@ -36,10 +36,10 @@ class OzonSender:
             products_range = dict(items=products['items'][i:i+cls.PRODUCT_IMPORT_MAX])
 
             cls.send_request_to_ozon(
-                url=config.ozon_update_product_stocks_url,
+                url=config.ozon_product_import_url,
                 body=products_range,
                 headers=headers,
-                result_message='Stocks update result: ',
+                result_message='Import result: ',
             )
 
     @classmethod
@@ -50,10 +50,10 @@ class OzonSender:
             products_range = dict(prices=products['prices'][i:i+cls.PRICE_UPDATE_MAX])
 
             cls.send_request_to_ozon(
-                url=config.ozon_update_product_stocks_url,
+                url=config.ozon_update_product_prices_url,
                 body=products_range,
                 headers=headers,
-                result_message='Stocks update result: ',
+                result_message='Prices update result: ',
             )
 
     @classmethod
