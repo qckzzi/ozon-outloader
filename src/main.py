@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import json
 import logging
+import traceback
 
 import pika
 
@@ -25,16 +26,17 @@ def callback(ch, method, properties, body):
         headers = _get_headers(products.pop('personal_area'))
         sending_function(products, headers)
 
-    except KeyError as e:
-        error = f'Body validation error: {e}'
-        write_log_entry(error)
-        logging.error(error)
-        return
     except Exception as e:
-        error = f'There was a problem: {e}'
-        write_log_entry(error)
-        logging.exception(error)
+        handle_exception(e)
         return
+
+
+# TODO: использовать Sentry
+def handle_exception(e: Exception):
+    error = f'There was a problem ({e.__class__.__name__}): {e}'
+    write_log_entry(error)
+    logging.exception(error)
+    print(traceback.format_exc())
 
 
 def _get_headers(personal_area_variables: list[dict]):
