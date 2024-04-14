@@ -11,6 +11,7 @@ from markets_bridge.utils import (
 from ozon.utils import (
     OzonSender,
 )
+import config
 
 
 def callback(ch, method, properties, body):
@@ -51,10 +52,16 @@ def _get_headers(personal_area_variables: list[dict]):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
-    connection_parameters = pika.ConnectionParameters(host='localhost', heartbeat=300, blocked_connection_timeout=300)
+    credo = pika.PlainCredentials(username=config.mq_user, password=config.mq_password)
+    connection_parameters = pika.ConnectionParameters(
+        host='localhost',
+        heartbeat=300,
+        blocked_connection_timeout=300,
+        credentials=credo,
+    )
     with pika.BlockingConnection(connection_parameters) as connection:
         channel = connection.channel()
-        channel.queue_declare('outloading')
+        channel.queue_declare('outloading', durable=True)
         channel.basic_consume('outloading', callback, auto_ack=True)
 
         try:

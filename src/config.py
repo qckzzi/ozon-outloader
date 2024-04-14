@@ -25,6 +25,11 @@ mb_system_variables_url = mb_domain + 'api/v1/common/system_variables/'
 mb_logs_url = mb_domain + 'api/v1/common/logs/'
 
 
+# RabbitMQ
+mq_user = os.getenv("MQ_USER")
+mq_password = os.getenv("MQ_PASSWORD")
+
+
 # OZON
 ozon_domain = 'https://api-seller.ozon.ru/'
 ozon_product_import_url = ozon_domain + 'v2/product/import'
